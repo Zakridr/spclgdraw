@@ -51,3 +51,5 @@ m = rand_matrix(v, c, cp, ncp)
 print("We had {0},\nand graph status is: {1}".format(m, is_graph(m)))
 
 spm = raw2np(m)
+
+
