@@ -1,4 +1,8 @@
-import scipy, numpy, math
+import numpy as np
+import scipy as sp
+import math
+import scipy.sparse as mlib
+import scipy.sparse.linalg as lalib
 # clustering algorithms
 # make another file for sparsification algorithms?
 
@@ -8,30 +12,44 @@ import scipy, numpy, math
 # O(n^2 log n) is pretty vague!
 
 # this is the global alg, but only examines a single vertex
-def kwok_lau(graph, v, k, epsilon, bigC):
+# graph is a matrix in scipy land
+# v is coordinate of input vertex (a number)
+# epsilon, bigC, littleC are floating controls for alg tuning
+def kwok_lau(graph, v, k, epsilon, bigC, littleC):
     num_vertices = graph.shape[0]
-    volbd = k * c
-# initialize p
-# first value set to be zero everywhere except coord of v, where it's 1
-    p = ['TODO']
+    volbd = k * littleC
+    p = [np.zeros(num_vertices, int)]
+    p[0][v] = 1
     last = p[-1]
-    num_iterations = num_vertices ** 2 * math.log(num_vertices, 2)
+    
+# length of walk to compute
+# need to get W!
+    I = mlib.identity(num_vertices, int)
+# assuming symmetric here
+    D = I.multiply(graph.dot(graph))
+    lazy_walk = 0.5 * (I + lalib.inv(D) * graph)
+
+    num_iterations = math.ceil(num_vertices ** 2 * math.log(num_vertices, 2))
     for t in range(1, num_iterations):
-        p.append(matrix_mult(W, last))
+        p.append(last * lazy_walk)
         last = p[-1]
     # ok, we have our p_ts now.
+    print(lazy_walk)
+    print(num_iterations)
+    print(p)
+
 # initialize set now
-    S[0, 0] = 'TODO'
-    outset = S[0,0]
-    outcond = conductance(outset)
-    for t in range(num_iterations):
-# sort all at once here?
-        for j in range(num_vertices):
-            # find smallest S_{t,j}
-            currcond = conductance(S[t,j])
-            if (currcond < outcond and volume(S[t,j]) <= volbd):
-                outset = S[t,j]
-                outcond = currcond
+    #S[0, 0] = 'TODO'
+    #outset = S[0,0]
+    #outcond = conductance(outset)
+    #for t in range(num_iterations):
+# so#rt all at once here?
+    #    for j in range(num_vertices):
+    #        # find smallest S_{t,j}
+    #        currcond = conductance(S[t,j])
+    #        if (currcond < outcond and volume(S[t,j]) <= volbd):
+    #            outset = S[t,j]
+    #            outcond = currcond
 
 #helper fcns
 # conductance

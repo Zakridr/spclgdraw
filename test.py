@@ -2,6 +2,7 @@ import numpy as np
 import scipy as sp
 import scipy.sparse as sparse
 import random
+import cluster
 
 SEED = 25
 random.seed(SEED)
@@ -48,8 +49,17 @@ c = 2
 cp= 1
 ncp = 0
 m = rand_matrix(v, c, cp, ncp)
-print("We had {0},\nand graph status is: {1}".format(m, is_graph(m)))
+#print("We had {0},\nand graph status is: {1}".format(m, is_graph(m)))
+#
+#spm = raw2np(m)
 
-spm = raw2np(m)
+# ok, now we need to test other guy
 
+graph = sparse.csc_matrix([[0, 0, 1], [0, 0, 1], [1, 1, 0]])
+init_v = 0
+k = 5
+epsilon = 0.001
+bigC = 1
+littleC = 1
+cluster.kwok_lau(graph, init_v, k, epsilon, bigC, littleC)
 
