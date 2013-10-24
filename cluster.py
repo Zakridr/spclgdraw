@@ -33,16 +33,15 @@ def kwok_lau(graph, v, k, epsilon, bigC, littleC):
     for t in range(1, num_iterations):
         p.append(last * lazy_walk)
         last = p[-1]
-    # ok, we have our p_ts now.
-    print(lazy_walk)
-    print(num_iterations)
-    print(p)
+
+# value function for sorting:
+    sortkey = lambda t: (lambda vertex: p[t][vertex] / D[v,v])
 
 # initialize set now
-    #S[0, 0] = 'TODO'
-    #outset = S[0,0]
-    #outcond = conductance(outset)
-    #for t in range(num_iterations):
+    # S[0, 0] = []
+    # outset = S[0,0]
+    # outcond = conductance(outset)
+    # for t in range(num_iterations):
 # so#rt all at once here?
     #    for j in range(num_vertices):
     #        # find smallest S_{t,j}
@@ -56,3 +55,6 @@ def kwok_lau(graph, v, k, epsilon, bigC, littleC):
 # volume
 # compute S_{t,j} somehow
 # involves sorting
+
+def conductance(csgraph):
+    return None
