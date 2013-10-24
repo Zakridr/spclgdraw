@@ -4,8 +4,8 @@ import scipy.sparse as sparse
 import random
 import cluster
 
-SEED = 25
-random.seed(SEED)
+#SEED = 25
+#random.seed(SEED)
 
 # so this is always the same matrix... 
 # even when I didn't have that constant seed above.
@@ -41,8 +41,8 @@ def is_graph(g):
                 return False
     return True
 
-def raw2np(matrix):
-    return sparse.lil_matrix(matrix)
+def raw2csc(matrix):
+    return sparse.csc_matrix(matrix)
 
 v = 10
 c = 2
@@ -51,15 +51,15 @@ ncp = 0
 m = rand_matrix(v, c, cp, ncp)
 #print("We had {0},\nand graph status is: {1}".format(m, is_graph(m)))
 #
-#spm = raw2np(m)
+#spm = raw2csc(m)
 
-# ok, now we need to test other guy
-
-graph = sparse.csc_matrix([[0, 0, 1], [0, 0, 1], [1, 1, 0]])
+tree3 = [[0,0,1], [0,0,1], [1, 1,0]]
+graph = raw2csc(tree3)
 init_v = 0
 k = 5
 epsilon = 0.001
 bigC = 1
 littleC = 1
-cluster.kwok_lau(graph, init_v, k, epsilon, bigC, littleC)
+result = cluster.kwok_lau(graph, init_v, k, epsilon, bigC, littleC)
 
+print(result)

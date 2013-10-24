@@ -15,11 +15,12 @@ import scipy.sparse.csgraph as csglib
 # this is the global alg, but only examines a single vertex
 # graph is a matrix in scipy land
 # v is coordinate of input vertex (a number)
-# epsilon, bigC, littleC are floating controls for alg tuning
-def kwok_lau(graph, v, k, epsilon, bigC, littleC):
+# epsilon, bigC, volbd_mult are floating controls for alg tuning
+def kwok_lau(graph, v, k, epsilon, path_length_scaler, volbd_scaler):
     num_vertices = graph.shape[0]
-    volbd = k * littleC
+    volbd = k * volbd_scaler
     vertices = list(range(num_vertices))
+    print("N: {0}\nVolume bound: {1}\n".format(num_vertices, volbd))
 
     p = [np.zeros(num_vertices, int)]
     p[0][v] = 1
@@ -30,7 +31,7 @@ def kwok_lau(graph, v, k, epsilon, bigC, littleC):
     I = mlib.identity(num_vertices, int)
 # assuming symmetric here
     L, D_vector = csglib.laplacian(graph, return_diag=True)
-    D = mlib.diags(D_vector, (0))
+    D = mlib.diags(D_vector, (0), format='csc')
 
     lazy_walk = 0.5 * (I + lalib.inv(D) * graph)
 
@@ -40,12 +41,11 @@ def kwok_lau(graph, v, k, epsilon, bigC, littleC):
         last = p[-1]
 
 # value function for sorting:
-    sortkey = lambda t: (lambda vertex: p[t][vertex] / D[v,v])
+    sortkey = lambda t: (lambda vertex: p[t][vertex] / D_vector[vertex])
 
 # initialize set now
     S = dict()
 
-# don't initialize S  like this. don't init at all?
     S[0,1] = p[0][v]
     outset = S[0,1]
 # when S has one element, the conductance is 1
@@ -55,14 +55,17 @@ def kwok_lau(graph, v, k, epsilon, bigC, littleC):
 # so#rt all at once here?
         p[t] = p[t-1] * lazy_walk
     
-        for j in range(1, num_vertices+1):
+        for j in range(1, num_vertices):
 # compute new S[t,j]
+# don't want to include the entire graph, that's dumb...
+# should also put another bound in here for later
             S[t,j] = computeS(sortkey(t), vertices, j, num_vertices)
             # find smallest S_{t,j}
-            currcond = conductance(S[t,j])
-            if (currcond < outcond and volume(S[t,j]) <= volbd):
+            currcond = conductance(S[t,j], L, D)
+            if (currcond < outcond and volume(S[t,j], D) <= volbd):
                 outset = S[t,j]
                 outcond = currcond
+    return outset
 
 #helper fcns
 # conductance
