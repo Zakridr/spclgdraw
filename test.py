@@ -1,6 +1,7 @@
 import numpy as np
 import scipy as sp
 import scipy.sparse as sparse
+import operator, functools
 import random
 import cluster
 
@@ -48,15 +49,18 @@ v = 10
 c = 2
 cp= 1
 ncp = 0
-m = rand_matrix(v, c, cp, ncp)
+randm = rand_matrix(v, c, cp, ncp)
 #print("We had {0},\nand graph status is: {1}".format(m, is_graph(m)))
 #
 #spm = raw2csc(m)
 
 tree3 = [[0,0,1], [0,0,1], [1, 1,0]]
-graph = raw2csc(tree3)
+rawgraph = randm
+graph = raw2csc(rawgraph)
 init_v = 0
-k = 5
+
+m = (functools.reduce(operator.add, map(sum, rawgraph))) / 2
+k = m
 epsilon = 0.001
 bigC = 1
 littleC = 1
