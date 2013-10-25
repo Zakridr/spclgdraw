@@ -59,7 +59,7 @@ rawgraph = randm
 graph = raw2csc(rawgraph)
 init_v = 0
 
-m = (functools.reduce(operator.add, map(sum, rawgraph))) / 2
+m = sum(map(sum, rawgraph)) / 2
 k = m
 epsilon = 0.001
 bigC = 1
